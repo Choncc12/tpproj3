@@ -124,28 +124,28 @@ void loadAudioFileAndProcessSamples(std::string inputFilePath )
 
 void generate_sine_wave(std::vector <double> wynik ,double frequency=1,int sample_rate=10000) {
 
-    std::vector <double> wynik;
+    std::vector <double> wynik1;
         for(int i=0;i<sample_rate;i++)
-            wynik.push_back(sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI)); 
+            wynik1.push_back(sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI)); 
 }
 
-void generate_sine_wave(std::vector <double> wynik, double frequency = 1, int sample_rate = 10000) {
+void generate_cosine_wave(std::vector <double> wynik, double frequency , int sample_rate ) {
 
-    std::vector <double> wynik;
+    std::vector <double> wynik2;
     for (int i = 0; i < sample_rate; i++)
-        wynik.push_back(cos((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI));
+        wynik2.push_back(cos((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI));
 }
 
-void generate_sine_wave(std::vector <double> wynik, double frequency = 1, int sample_rate = 10000) {
+void generate_square_wave(std::vector <double> wynik, double frequency , int sample_rate ) {
 
-    std::vector <double> wynik;
+    std::vector <double> wynik3;
     for (int i = 0; i < sample_rate; i++)
         if (sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI) > 0) {
-            wynik.push_back(1);
+            wynik3.push_back(1);
         }
         else
             if (sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI) <= 0) {
-                wynik.push_back(-1) ;
+                wynik3.push_back(-1) ;
             }
         
 }
@@ -159,36 +159,23 @@ void plot_line(std::vector<double> X, std::vector<double> Y) {
 }
 
 
-std::vector<double> input;
-std::vector<double> result;
-std::vector<std::complex<double>> output;
 
-double IDFT(size_t n)
-{
-    
-    double a = 0;
-    size_t N = output.size();
-    for (size_t k = 0; k < N; k++)
-    {
-        auto phase = (2 * M_PI * k * n) / N;
-        a += cos(phase) * output[k].real() - sin(phase) * output[k].imag();
-    }
-    a /= N;
-    return a;
-}
 
-std::complex<double> DFT(double in, int k)
+std::vector<std::complex<double>> DFT(std::vector<double> input )
 {
     double a = 0;
     double b = 0;
+    std::vector<std::complex<double>> wynik4;
     int N = input.size();
+    float k = N;
     for (int n = 0; n < N; n++)
     {
-        a += cos((2 * M_PI * k * n) / N) * input[n];
-        b += -sin((2 * M_PI * k * n) / N) * input[n];
+        wynik4.push_back(0);
+        wynik4[n].real(input[n] * cos((2.f * M_PI * k * static_cast<float> (n)) / N))  ;
+        wynik4[n].imag( input[n] * -sin((2.f * M_PI * k * static_cast<float> (n)) / N)) ;
     }
     std::complex<double> temp(a, b);
-    return temp;
+    return  wynik4;
 }
 
 
@@ -203,4 +190,6 @@ PYBIND11_MODULE(pybind11module, module) {
     module.def("square", &writeSquareWaveToAudioFile);
     module.def("test", &loadAudioFileAndProcessSamples);
     module.def("plot_line", &plot_line);
+    module.def("DFT", &DFT);
+    module.def("generate_sine_wave", &generate_sine_wave);
 }
