@@ -122,7 +122,33 @@ void loadAudioFileAndProcessSamples(std::string inputFilePath )
 
 }
 
+void generate_sine_wave(std::vector <double> wynik ,double frequency=1,int sample_rate=10000) {
 
+    std::vector <double> wynik;
+        for(int i=0;i<sample_rate;i++)
+            wynik.push_back(sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI)); 
+}
+
+void generate_sine_wave(std::vector <double> wynik, double frequency = 1, int sample_rate = 10000) {
+
+    std::vector <double> wynik;
+    for (int i = 0; i < sample_rate; i++)
+        wynik.push_back(cos((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI));
+}
+
+void generate_sine_wave(std::vector <double> wynik, double frequency = 1, int sample_rate = 10000) {
+
+    std::vector <double> wynik;
+    for (int i = 0; i < sample_rate; i++)
+        if (sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI) > 0) {
+            wynik.push_back(1);
+        }
+        else
+            if (sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI) <= 0) {
+                wynik.push_back(-1) ;
+            }
+        
+}
 
 void plot_line(std::vector<double> X, std::vector<double> Y) {
 
@@ -131,6 +157,41 @@ void plot_line(std::vector<double> X, std::vector<double> Y) {
     plot(X, Y);
     save("plot.png");
 }
+
+
+std::vector<double> input;
+std::vector<double> result;
+std::vector<std::complex<double>> output;
+
+double IDFT(size_t n)
+{
+    
+    double a = 0;
+    size_t N = output.size();
+    for (size_t k = 0; k < N; k++)
+    {
+        auto phase = (2 * M_PI * k * n) / N;
+        a += cos(phase) * output[k].real() - sin(phase) * output[k].imag();
+    }
+    a /= N;
+    return a;
+}
+
+std::complex<double> DFT(double in, int k)
+{
+    double a = 0;
+    double b = 0;
+    int N = input.size();
+    for (int n = 0; n < N; n++)
+    {
+        a += cos((2 * M_PI * k * n) / N) * input[n];
+        b += -sin((2 * M_PI * k * n) / N) * input[n];
+    }
+    std::complex<double> temp(a, b);
+    return temp;
+}
+
+
 
 PYBIND11_MODULE(pybind11module, module) {
 
