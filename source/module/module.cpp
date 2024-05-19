@@ -111,15 +111,16 @@ void loadAudioFileAndProcessSamples(std::string inputFilePath )
     assert(loadedOK);
 
     //a.samples[channel][i] = 
-   
-    
-
-    using namespace matplot;
-
-    plot(a.samples);
-
-    show();
-
+    std::vector<double> file;
+    int temp_a = a.getNumChannels();
+    int temp_b = a.getNumSamplesPerChannel();
+    for (int i = 0; i < temp_a; i++)
+    {
+        for (int j = 0; j < temp_b; j++)
+        {
+            file.push_back(a.samples[i][j]);
+        }
+    }
 }
 
 void generate_sine_wave(std::vector <double> wynik ,double frequency=1,int sample_rate=10000) {
@@ -153,9 +154,10 @@ void generate_square_wave(std::vector <double> wynik, double frequency , int sam
 void plot_line(std::vector<double> X, std::vector<double> Y) {
 
     using namespace matplot;
-    
+    static int nr_pliku=0;
     plot(X, Y);
-    save("plot.png");
+    save("plot"+std::to_string(nr_pliku)+".png");
+    nr_pliku++;
 }
 
 
@@ -163,22 +165,47 @@ void plot_line(std::vector<double> X, std::vector<double> Y) {
 
 std::vector<std::complex<double>> DFT(std::vector<double> input )
 {
-    double a = 0;
-    double b = 0;
+    
     std::vector<std::complex<double>> wynik4;
+    std::complex<double> sum;
     int N = input.size();
-    float k = N;
-    for (int n = 0; n < N; n++)
-    {
-        wynik4.push_back(0);
-        wynik4[n].real(input[n] * cos((2.f * M_PI * k * static_cast<float> (n)) / N))  ;
-        wynik4[n].imag( input[n] * -sin((2.f * M_PI * k * static_cast<float> (n)) / N)) ;
+    int k = N;
+
+    for (int K = 0; K < k; K++) {
+        sum.real(0);
+        sum.imag(0);
+        for (int n = 0; n < N; n++)
+        {
+            std::complex<double> temp;
+            temp.real(input[n] * cos((2.f * M_PI * K * static_cast<float> (n)) / N));
+            temp.imag(input[n] * -sin((2.f * M_PI * K * static_cast<float> (n)) / N));
+            sum += temp;
+        }
+        wynik4.push_back(sum);
     }
-    std::complex<double> temp(a, b);
     return  wynik4;
 }
 
+std::vector<double> IDFT(std::vector<std::complex<double>> input) 
+{
+    std::complex<double> sum;
+    int N = input.size();
+    std::vector<double> inverse(N);
 
+    for (int n = 0; n < N; n++) {
+
+        sum.real(0);
+        sum.imag(0);
+        for (int k = 0; k < N; k++) {
+            double wnetrze = 2.f * M_PI * k * n / N; //e^{ix}=cos{x}+isin{x}
+            std::complex<double> euler(cos(wnetrze), sin(wnetrze)); 
+            sum += input[k] * euler; // an*Wn^(...), Wn=e^i*(2pi/N)
+        }
+        inverse[n] = sum.real() / N;
+    }
+
+    return inverse;
+}
 
 PYBIND11_MODULE(pybind11module, module) {
 
@@ -191,5 +218,6 @@ PYBIND11_MODULE(pybind11module, module) {
     module.def("test", &loadAudioFileAndProcessSamples);
     module.def("plot_line", &plot_line);
     module.def("DFT", &DFT);
+    module.def("IDFT", &IDFT);
     module.def("generate_sine_wave", &generate_sine_wave);
 }
