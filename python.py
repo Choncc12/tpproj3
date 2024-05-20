@@ -7,14 +7,15 @@ f = 10
 N = 1000
 t = np.linspace(0, 2 * np.pi, N)
 
-x = np.square(f * t)
+x = lib.generate_sawtooth_wave(f, N)
 X= lib.DFT(x)
 Y = np.abs(X)
+
 #lib.plot_line(t,x)
 
 lib.plot_line(np.arange(N),x)
 lib.plot_line(np.arange(N),Y)
-lib.plot_line(np.arange(N),lib.IDFT(X))
+lib.plot_line(np.arange(N),lib.low_pass_filter(Y, 550))
 
 #say_hello(2)
 
