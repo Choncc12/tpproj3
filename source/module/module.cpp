@@ -11,12 +11,6 @@
 
 namespace py = pybind11;
 
-void say_hello(int x) { //funkcja do testowania czy biblioteka dziala
-
-    printf("Hello World!\n");
-    std::cout << x << std::endl;
-
-}
 
 void writeSineWaveToAudioFile(float sampleRate = 44100.f , float frequencyInHz = 440.f)
 {
@@ -220,11 +214,20 @@ std::vector<double> IDFT(std::vector<std::complex<double>> input)
     return inverse;
 }
 
+std::vector <double> low_pass_filter(std::vector <double>input, double frequency) {
+
+    int b = ceil(frequency);
+    for (int i = b; i < input.size(); i++) {
+        input[i] = 0;
+    }
+
+    return input;
+}
+
 PYBIND11_MODULE(pybind11module, module) {
 
     module.doc() = "Pybind11Module";
 
-    module.def("say_hello", &say_hello);
     module.def("sin", &writeSineWaveToAudioFile);
     module.def("cos", &writeCosineWaveToAudioFile);
     module.def("square", &writeSquareWaveToAudioFile);
@@ -236,4 +239,5 @@ PYBIND11_MODULE(pybind11module, module) {
     module.def("generate_cosine_wave", &generate_cosine_wave);
     module.def("generate_square_wave", &generate_square_wave);
     module.def("generate_sawtooth_wave", &generate_sawtooth_wave);
+    module.def("low_pass_filter", &low_pass_filter);
 }
