@@ -123,32 +123,45 @@ void loadAudioFileAndProcessSamples(std::string inputFilePath )
     }
 }
 
-void generate_sine_wave(std::vector <double> wynik ,double frequency=1,int sample_rate=10000) {
+std::vector <double> generate_sine_wave(double frequency = 1, int sample_rate = 10000) {
 
     std::vector <double> wynik1;
-        for(int i=0;i<sample_rate;i++)
-            wynik1.push_back(sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI)); 
+    for (int i = 0; i < sample_rate; i++) {
+        wynik1.push_back(sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI));
+    }
+    return wynik1;
 }
 
-void generate_cosine_wave(std::vector <double> wynik, double frequency , int sample_rate ) {
+std::vector <double> generate_cosine_wave(double frequency = 1, int sample_rate = 10000) {
 
     std::vector <double> wynik2;
-    for (int i = 0; i < sample_rate; i++)
+    for (int i = 0; i < sample_rate; i++) {
         wynik2.push_back(cos((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI));
+    }
+    return wynik2;
 }
 
-void generate_square_wave(std::vector <double> wynik, double frequency , int sample_rate ) {
+std::vector <double> generate_square_wave(double frequency = 1, int sample_rate = 10000) {
 
     std::vector <double> wynik3;
-    for (int i = 0; i < sample_rate; i++)
-        if (sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI) > 0) {
+    for (int i = 0; i < sample_rate; i++) {
+        if (sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI) >= 0) {
             wynik3.push_back(1);
         }
-        else
-            if (sin((static_cast<float> (i) / sample_rate) * frequency * 2.f * (float)M_PI) <= 0) {
-                wynik3.push_back(-1) ;
-            }
-        
+        else {
+            wynik3.push_back(-1);
+        }
+    }
+    return wynik3;
+}
+
+std::vector <double> generate_sawtooth_wave(double frequency = 1, int sample_rate = 10000) {
+
+    std::vector <double> wynik4;
+    for (int i = 0; i < sample_rate; i++) {
+        wynik4.push_back(fmod(static_cast<float>(i), frequency));
+    }
+    return wynik4;
 }
 
 void plot_line(std::vector<double> X, std::vector<double> Y) {
@@ -220,4 +233,7 @@ PYBIND11_MODULE(pybind11module, module) {
     module.def("DFT", &DFT);
     module.def("IDFT", &IDFT);
     module.def("generate_sine_wave", &generate_sine_wave);
+    module.def("generate_cosine_wave", &generate_cosine_wave);
+    module.def("generate_square_wave", &generate_square_wave);
+    module.def("generate_sawtooth_wave", &generate_sawtooth_wave);
 }
