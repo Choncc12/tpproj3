@@ -34,7 +34,7 @@
 #if defined (_MSC_VER)
 #undef max
 #undef min
-
+#define NOMINMAX
 #endif
 
 #include <iostream>
