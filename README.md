@@ -1,18 +1,13 @@
-**Rzeczy do pobrania:**
+TECHNIKI PROGRAMOWANIA - projekt 3
+Paweł Gogolewski 197990
+Bartek Chabros 198404
 
--gnuplot (ZROBIĆ PATH)
-
--matplotplusplus (do externals)
-
--pybind11 (do externals)
-
--cmake
-
--python (ZROBIĆ PATH)
-
-
-Komendy CMD (WYMAGANY PYTHON):
-
-pip install soundfile
-
-pip install numpy
+Wymagania:
+Python
+Visual Studio Community 22 x64
+cmake
+numpy
+użyte external:
+MatPlotPlusPlus
+AudioFile
+pybind11
