@@ -1,0 +1,8 @@
+﻿  Building Custom Rule C:/Users/pawel/Desktop/ProjektTP/tp3/TP_Projekt Actual/external/matplotplusplus/source/3rd_party/CMakeLists.txt
+  algebra.cpp
+  fruchterman_reingold.cpp
+  kamada_kawai.cpp
+  layout.cpp
+  nodesoup.cpp
+  Generowanie kodu...
+  nodesoup.vcxproj -> C:\Users\pawel\Desktop\ProjektTP\tp3\TP_Projekt Actual\visual\external\matplotplusplus\source\3rd_party\Debug\nodesoup.lib
