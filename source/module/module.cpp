@@ -11,84 +11,6 @@
 
 namespace py = pybind11;
 
-
-void writeSineWaveToAudioFile(float sampleRate = 44100.f , float frequencyInHz = 440.f)
-{
-    AudioFile<float> a;
-    a.setNumChannels(2);
-    a.setNumSamplesPerChannel(44100);
-
-
-    // 3. Write the samples to the AudioFile sample buffer
-
-    for (int i = 0; i < a.getNumSamplesPerChannel(); i++)
-    {
-        for (int channel = 0; channel < a.getNumChannels(); channel++)
-        {
-            a.samples[channel][i] = sin((static_cast<float> (i) / sampleRate) * frequencyInHz * 2.f * (float)M_PI);
-        }
-    }
-
-    // 4. Save the AudioFile
-
-    std::string filePath = "sine-wave.wav"; // change this to somewhere useful for you
-    a.save("sine-wave.wav", AudioFileFormat::Wave);
-}
-
-void writeCosineWaveToAudioFile(float sampleRate = 44100.f, float frequencyInHz = 440.f)
-{
-    AudioFile<float> a;
-    a.setNumChannels(2);
-    a.setNumSamplesPerChannel(44100);
-
-
-    // 3. Write the samples to the AudioFile sample buffer
-
-    for (int i = 0; i < a.getNumSamplesPerChannel(); i++)
-    {
-        for (int channel = 0; channel < a.getNumChannels(); channel++)
-        {
-            a.samples[channel][i] = sin((static_cast<float> (i) / sampleRate) * frequencyInHz * 2.f * (float)M_PI + (float)M_PI/2.f);
-        }
-    }
-
-    // 4. Save the AudioFile
-
-    std::string filePath = "cosine-wave.wav"; // change this to somewhere useful for you
-    a.save("cosine-wave.wav", AudioFileFormat::Wave);
-}
-
-void writeSquareWaveToAudioFile(float sampleRate = 44100.f, float frequencyInHz = 440.f)
-{
-    AudioFile<float> a;
-    a.setNumChannels(2);
-    a.setNumSamplesPerChannel(sampleRate);
-
-
-    // 3. Write the samples to the AudioFile sample buffer
-
-    for (int i = 0; i < a.getNumSamplesPerChannel(); i++)
-    {
-        for (int channel = 0; channel < a.getNumChannels(); channel++)
-        {
-            if (sin((static_cast<float> (i) / sampleRate) * frequencyInHz * 2.f * (float)M_PI) > 0) {
-                a.samples[channel][i] = 1.f;
-            }else
-                if (sin((static_cast<float> (i) / sampleRate) * frequencyInHz * 2.f * (float)M_PI) <= 0) {
-                    a.samples[channel][i] = -1.f;
-                }
-                
-            
-        }
-    }
-
-    // 4. Save the AudioFile
-
-    std::string filePath = "square-wave.wav"; // change this to somewhere useful for you
-    a.save("square-wave.wav", AudioFileFormat::Wave);
-}
-
-
 std::vector<double> loadAudioFileAndProcessSamples(std::string inputFilePath, int length)
 {
     
@@ -227,9 +149,6 @@ PYBIND11_MODULE(pybind11module, module) {
     module.doc() = "Pybind11Module";
 
     module.def("audio", &loadAudioFileAndProcessSamples);
-    module.def("sin", &writeSineWaveToAudioFile);
-    module.def("cos", &writeCosineWaveToAudioFile);
-    module.def("square", &writeSquareWaveToAudioFile);
     module.def("plot_line", &plot_line);
     module.def("DFT", &DFT);
     module.def("IDFT", &IDFT);
