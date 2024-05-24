@@ -89,22 +89,13 @@ void writeSquareWaveToAudioFile(float sampleRate = 44100.f, float frequencyInHz 
 }
 
 
-void loadAudioFileAndProcessSamples(std::string inputFilePath )
+std::vector<double> loadAudioFileAndProcessSamples(std::string inputFilePath, int length)
 {
     
-   
-
-    //---------------------------------------------------------------
-    // 2. Create an AudioFile object and load the audio file
-
     AudioFile<float> a;
     bool loadedOK = a.load(inputFilePath);
 
-    /** If you hit this assert then the file path above
-     probably doesn't refer to a valid audio file */
     assert(loadedOK);
-
-    //a.samples[channel][i] = 
     std::vector<double> file;
     int temp_a = a.getNumChannels();
     int temp_b = a.getNumSamplesPerChannel();
@@ -113,8 +104,12 @@ void loadAudioFileAndProcessSamples(std::string inputFilePath )
         for (int j = 0; j < temp_b; j++)
         {
             file.push_back(a.samples[i][j]);
+            if (file.size() >= length) {
+                return file;
+            }
         }
     }
+    return file;
 }
 
 std::vector <double> generate_sine_wave(double frequency = 1, int sample_rate = 10000) {
@@ -216,22 +211,25 @@ std::vector<double> IDFT(std::vector<std::complex<double>> input)
 
 std::vector <double> low_pass_filter(std::vector <double>input, double frequency) {
 
+    std::vector<std::complex<double>> w_dft;
+    w_dft = DFT(input);
     int b = ceil(frequency);
-    for (int i = b; i < input.size(); i++) {
-        input[i] = 0;
+    for (int i = b; i < w_dft.size(); i++) {
+        w_dft[i] = 0;
     }
-
-    return input;
+    std::vector<double> w_idft;
+    w_idft = IDFT(w_dft);
+    return w_idft;
 }
 
 PYBIND11_MODULE(pybind11module, module) {
 
     module.doc() = "Pybind11Module";
 
+    module.def("audio", &loadAudioFileAndProcessSamples);
     module.def("sin", &writeSineWaveToAudioFile);
     module.def("cos", &writeCosineWaveToAudioFile);
     module.def("square", &writeSquareWaveToAudioFile);
-    module.def("test", &loadAudioFileAndProcessSamples);
     module.def("plot_line", &plot_line);
     module.def("DFT", &DFT);
     module.def("IDFT", &IDFT);
